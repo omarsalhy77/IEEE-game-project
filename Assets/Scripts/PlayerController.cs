@@ -8,47 +8,60 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance;
     [SerializeField] private float moveSpeed = 5f,rotationSpeed;
-   
+    [SerializeField] private Transform cameraTransform;
+
     private PlayerInputActions playerInputActions;
     private Vector2 inputVector;
 
     public event EventHandler OnInteractInput;
 
+    private InputAction m_lookAction;
 
 
     public float sensitivity = 100f;
-    //private float rotationX = 0f;
-    //private float rotationY = 0f;
+    
     private void Awake()
     {
         Instance = this;
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
-
+        m_lookAction = InputSystem.actions.FindAction("Look");
         playerInputActions.Player.Interact.performed += OnInteractPerformed;
     }
 
     private void OnDestroy()
     {
-        //Debug.Log(player.transform.position);
+        
         playerInputActions.Player.Interact.performed -= OnInteractPerformed;
     }
 
     private void Update()
     {
         HandleMovement();
-        //Camera();
+        
     }
 
     private void HandleMovement()
     {
-        //transform.rotation = transform.rotation*rotationSpeed * Time.deltaTime;
         inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
-        transform.position += moveDir.normalized * moveSpeed * Time.deltaTime;
-        if (moveDir != Vector3.zero)
+
+        // Convert moveDir to be relative to camera forward and right vectors
+        Vector3 camForward = cameraTransform.forward;
+        Vector3 camRight = cameraTransform.right;
+
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        Vector3 relativeMoveDir = camForward * moveDir.z + camRight * moveDir.x;
+
+        transform.position += relativeMoveDir.normalized * moveSpeed * Time.deltaTime;
+
+        if (relativeMoveDir != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+            Quaternion targetRotation = Quaternion.LookRotation(relativeMoveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
     }
@@ -67,7 +80,8 @@ public class PlayerController : MonoBehaviour
     {
         return inputVector.normalized;
     }
+    
 
-   
+
 
 }

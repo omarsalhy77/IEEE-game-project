@@ -5,7 +5,9 @@ public class CameraFollow : MonoBehaviour
 {
     public static CameraFollow instance;
     public Transform target;
-    private float startPOV, targetFOV;
+    private float targetFOV;
+    public float mouseSensitivity = 100f;
+    private float xRotation = 0f;
 
     public float zoomSpeed = 1f;
 
@@ -21,8 +23,7 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        startPOV = theCam.fieldOfView;
-        targetFOV = startPOV;
+        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -30,42 +31,29 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     private void LateUpdate()
     {
-        CameraRotate();
+        Debug.Log($"Mouse X: {mouseX}, Mouse Y: {mouseY}");
         transform.position = target.position +new Vector3 (0,2,0);
         transform.rotation = target.rotation;
 
-        theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
-        //
+        //theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
+        MouseInput();
     }
 
-    public void ZoomIn(float newZoom)
-    {
-        targetFOV = newZoom;
-    }
-    public void ZoomOut()
-    {
-        targetFOV = startPOV;
-
-    }
-    private void CameraRotate()
+    private void MouseInput()
     {
         // Get mouse input
-        mouseX += Input.GetAxis("Mouse X") * rotationSpeed;
-        mouseY -= Input.GetAxis("Mouse Y") * rotationSpeed;
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // Clamp vertical rotation to prevent flipping
-        mouseY = Mathf.Clamp(mouseY, -35, 60);
+        // Rotate camera vertically and clamp rotation to prevent flipping
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        // Rotate the camera based on mouse input
-        transform.rotation = Quaternion.Euler(mouseY, mouseX, 0);
-
-        // Optional: If orbiting around a target, update position accordingly
-        if (target.transform.position != Vector3.zero)
-        {
-            float distance = Vector3.Distance(transform.position, target.position);
-            Vector3 offset = new Vector3(0, 0, -distance);
-            transform.position = target.position + transform.rotation * offset;
-        }
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        // Rotate player body horizontally
+        
+            target.Rotate(Vector3.up * mouseX);
+        
     }
 
 
