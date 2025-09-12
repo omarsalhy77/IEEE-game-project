@@ -1,18 +1,63 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraFollow : MonoBehaviour
 {
+    public static CameraFollow instance;
+    public Transform target;
+    private float targetFOV;
+    public float mouseSensitivity = 100f;
+    private float xRotation = 0f;
 
-    [SerializeField] private Transform target; // The player
-    [SerializeField] private Vector3 offset = new Vector3(0f, 10f, -10f);
-    [SerializeField] private float smoothSpeed = 5f;
+    public float zoomSpeed = 1f;
 
+    public Camera theCam;
+
+    public float rotationSpeed = 5.0f;
+    private float mouseX, mouseY;
+
+    private void Awake()
+    {
+        instance = this;
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    // Update is called once per frame
     private void LateUpdate()
     {
-        if (target == null) return;
+        Debug.Log($"Mouse X: {mouseX}, Mouse Y: {mouseY}");
+        transform.position = target.position +new Vector3 (0,2,0);
+        transform.rotation = target.rotation;
 
-        Vector3 desiredPosition = target.position + offset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-        transform.position = smoothedPosition;
+        //theCam.fieldOfView = Mathf.Lerp(theCam.fieldOfView, targetFOV, zoomSpeed * Time.deltaTime);
+        MouseInput();
     }
+
+    private void MouseInput()
+    {
+        // Get mouse input
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        // Rotate camera vertically and clamp rotation to prevent flipping
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        // Rotate player body horizontally
+        
+            target.Rotate(Vector3.up * mouseX);
+        
+    }
+
+
 }
+
+
+
