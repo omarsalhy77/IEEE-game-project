@@ -144,6 +144,7 @@ PlayerSettings:
   bundleVersion: 0.1.0
   preloadedAssets:
   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  - {fileID: -944628639613478452, guid: 6b595d78b8bad204b9d1483b97109ebf, type: 3}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -927,11 +928,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 48678a83-3fda-4b71-8d01-c3cbe56f62ae
+  cloudProjectId: 84b88f17-a587-421b-ac7c-a3be3f70d6a4
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
   projectName: IEEE game
-  organizationId: elsalhy
+  organizationId: mahmoudrocky1
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
