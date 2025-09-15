@@ -69,10 +69,17 @@ public class PlayerController : MonoBehaviour
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {
         OnInteractInput?.Invoke(this, EventArgs.Empty);
-        DoorOpenCLose.Instance.DoorOpen();
-        if (!DoorOpenCLose.Instance.doorIsOpen)
+        float distance = Vector3.Distance(transform.position, DoorOpenCLose.Instance.doorTransform.position);
+        if (distance < 3)
         {
-            DoorOpenCLose.Instance.CloseDoor();
+            if (DoorOpenCLose.Instance.doorIsOpen)
+            {
+                DoorOpenCLose.Instance.CloseDoor();
+            }
+            else 
+            {
+                DoorOpenCLose.Instance.OpenDoor();
+            }
         }
     }
 

@@ -31,7 +31,7 @@ public class CameraFollow : MonoBehaviour
     // Update is called once per frame
     private void LateUpdate()
     {
-        Debug.Log($"Mouse X: {mouseX}, Mouse Y: {mouseY}");
+        //Debug.Log($"Mouse X: {mouseX}, Mouse Y: {mouseY}");
         transform.position = target.position +new Vector3 (0,2,0);
         transform.rotation = target.rotation;
 
